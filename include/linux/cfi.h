@@ -7,6 +7,8 @@
 #ifndef _LINUX_CFI_H
 #define _LINUX_CFI_H
 
+#include <linux/version.h>
+
 #ifdef CONFIG_CFI_CLANG
 typedef void (*cfi_check_fn)(uint64_t id, void *ptr, void *diag);
 
@@ -34,7 +36,9 @@ static inline void cfi_module_remove(struct module *mod, unsigned long base_addr
 
 #else /* !CONFIG_CFI_CLANG */
 
-#define __CFI_ADDRESSABLE(fn)
+#define __CFI_ADDRESSABLE0(fn)
+#define __CFI_ADDRESSABLE(fn, __attr)
+
 
 #endif /* CONFIG_CFI_CLANG */
 

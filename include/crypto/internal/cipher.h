@@ -13,9 +13,6 @@
 
 #include <crypto/algapi.h>
 
-struct crypto_cipher {
-	struct crypto_tfm base;
-};
 
 /**
  * DOC: Single Block Cipher API
@@ -34,10 +31,6 @@ struct crypto_cipher {
  * operations.
  */
 
-static inline struct crypto_cipher *__crypto_cipher_cast(struct crypto_tfm *tfm)
-{
-	return (struct crypto_cipher *)tfm;
-}
 
 /**
  * crypto_alloc_cipher() - allocate single block cipher handle
@@ -53,29 +46,11 @@ static inline struct crypto_cipher *__crypto_cipher_cast(struct crypto_tfm *tfm)
  * Return: allocated cipher handle in case of success; IS_ERR() is true in case
  *	   of an error, PTR_ERR() returns the error code.
  */
-static inline struct crypto_cipher *crypto_alloc_cipher(const char *alg_name,
-							u32 type, u32 mask)
-{
-	type &= ~CRYPTO_ALG_TYPE_MASK;
-	type |= CRYPTO_ALG_TYPE_CIPHER;
-	mask |= CRYPTO_ALG_TYPE_MASK;
-
-	return __crypto_cipher_cast(crypto_alloc_base(alg_name, type, mask));
-}
-
-static inline struct crypto_tfm *crypto_cipher_tfm(struct crypto_cipher *tfm)
-{
-	return &tfm->base;
-}
 
 /**
  * crypto_free_cipher() - zeroize and free the single block cipher handle
  * @tfm: cipher handle to be freed
  */
-static inline void crypto_free_cipher(struct crypto_cipher *tfm)
-{
-	crypto_free_tfm(crypto_cipher_tfm(tfm));
-}
 
 /**
  * crypto_has_cipher() - Search for the availability of a single block cipher
@@ -87,14 +62,6 @@ static inline void crypto_free_cipher(struct crypto_cipher *tfm)
  * Return: true when the single block cipher is known to the kernel crypto API;
  *	   false otherwise
  */
-static inline int crypto_has_cipher(const char *alg_name, u32 type, u32 mask)
-{
-	type &= ~CRYPTO_ALG_TYPE_MASK;
-	type |= CRYPTO_ALG_TYPE_CIPHER;
-	mask |= CRYPTO_ALG_TYPE_MASK;
-
-	return crypto_has_alg(alg_name, type, mask);
-}
 
 /**
  * crypto_cipher_blocksize() - obtain block size for cipher
@@ -106,32 +73,6 @@ static inline int crypto_has_cipher(const char *alg_name, u32 type, u32 mask)
  *
  * Return: block size of cipher
  */
-static inline unsigned int crypto_cipher_blocksize(struct crypto_cipher *tfm)
-{
-	return crypto_tfm_alg_blocksize(crypto_cipher_tfm(tfm));
-}
-
-static inline unsigned int crypto_cipher_alignmask(struct crypto_cipher *tfm)
-{
-	return crypto_tfm_alg_alignmask(crypto_cipher_tfm(tfm));
-}
-
-static inline u32 crypto_cipher_get_flags(struct crypto_cipher *tfm)
-{
-	return crypto_tfm_get_flags(crypto_cipher_tfm(tfm));
-}
-
-static inline void crypto_cipher_set_flags(struct crypto_cipher *tfm,
-					   u32 flags)
-{
-	crypto_tfm_set_flags(crypto_cipher_tfm(tfm), flags);
-}
-
-static inline void crypto_cipher_clear_flags(struct crypto_cipher *tfm,
-					     u32 flags)
-{
-	crypto_tfm_clear_flags(crypto_cipher_tfm(tfm), flags);
-}
 
 /**
  * crypto_cipher_setkey() - set key for cipher
